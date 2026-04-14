@@ -247,11 +247,12 @@ namespace Repositories.Classes
                     PersonnelActivities = personnel.PersonnelActivities,
                     EnlistmentRecords = personnel.EnlistmentRecords,
                     DateEnteredService = personnel.DateEnteredService,
+                    Profile = personnel.Profile,
                     ETEDaysRemaining = daysRemaining,
                     DateOfLatestReEnlistment = dateOfLatestReEnlistment,
                     NextETE = nextEte,
                     YearsInService = yearsInService,
-                    Remarks = remarks
+                    Remarks = remarks,
                 });
             }
 
