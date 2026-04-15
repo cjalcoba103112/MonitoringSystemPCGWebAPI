@@ -23,6 +23,10 @@ namespace Models
 
         [ForeignKey("DepartmentId")]
         public Department? Department { get; set; }  
+        public int? UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public Usertbl? User {  get; set; }
 
         public string? EmploymentStatus { get; set; }
         public DateTime? DateEnlisted { get; set; }

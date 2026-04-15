@@ -16,10 +16,7 @@ namespace Models
         [JsonIgnore]
         public string? HashedPassword {get;set;}
 
-		public  int? PersonnelId { get; set; }
         public string? Email { get; set; }
-        [ForeignKey("PersonnelId")]
-		public Personnel? Personnel { get; set; }
 
     }
 }
