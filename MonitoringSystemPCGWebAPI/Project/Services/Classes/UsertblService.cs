@@ -2,25 +2,38 @@
 using Models;
 using Repositories.Interfaces;
 using Services.Interfaces;
+using Utilities.Interfaces;
 
 namespace Services.Classes
 {
     public class UsertblService : IUsertblService
     {
         private readonly IUsertblRepository _usertblRepository;
-
-        public UsertblService(IUsertblRepository usertblRepository)
+        private readonly IEncryptUtility _encryptUtility;
+        public UsertblService(IUsertblRepository usertblRepository, IEncryptUtility encryptUtility)
         {
             _usertblRepository = usertblRepository;
+            _encryptUtility = encryptUtility;
         }
 
         public async Task<Usertbl?> InsertAsync(Usertbl data)
         {
+            string salt =  _encryptUtility.GenerateRandomSalt();
+            string hashedPassword = _encryptUtility.GenerateHashedPassword(data?.HashedPassword??"", salt);
+
+            data.Salt = salt;
+            data.HashedPassword = hashedPassword;
             return await _usertblRepository.InsertAsync(data);
         }
 
         public async Task<Usertbl?> UpdateAsync(Usertbl data)
         {
+            var user = await _usertblRepository.GetByIdAsync(data.UserId??0);
+            if (user == null) throw new Exception("Invalid User");
+
+            string hashedPassword = _encryptUtility.GenerateHashedPassword(data?.HashedPassword ?? "", user.Salt);
+
+            data.HashedPassword = hashedPassword;
             return await _usertblRepository.UpdateAsync(data);
         }
 

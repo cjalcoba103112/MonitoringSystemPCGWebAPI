@@ -25,6 +25,7 @@ namespace Repositories.Classes
                    .ThenInclude(a => a.RankCategory)
                .Include(p => p.Department)
                .Include(p => p.PersonnelPromotions)
+               .Include(p=>p.User)
                .Where(p=>p.PersonnelId == id)
                .FirstOrDefaultAsync();
 
