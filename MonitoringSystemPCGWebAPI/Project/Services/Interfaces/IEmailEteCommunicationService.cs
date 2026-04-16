@@ -5,7 +5,7 @@ namespace Services.Interfaces
 {
     public interface IEmailEteCommunicationService
     {
-        Task<EmailEteCommunication?> GetByPersonnelId(int id,DateTime nextETE);
+        Task<EmailEteCommunication?> GetByPersonnelId(int id,DateTime? nextETE);
         Task<EmailEteCommunication?> GetByToken(string token);
         Task<EmailEteCommunication?> InsertAsync(EmailEteCommunication data);
         Task<EmailEteCommunication?> UpdateAsync(EmailEteCommunication data, IFormFile? supportingDocument);

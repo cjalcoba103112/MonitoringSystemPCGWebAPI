@@ -33,7 +33,7 @@ namespace ApiControllers
         }
 
         [HttpGet("personnel/{personnelId}")]
-        public async Task<IActionResult> GetByPersonnelId(int personnelId, [FromQuery] DateTime nextETE)
+        public async Task<IActionResult> GetByPersonnelId(int personnelId, [FromQuery] DateTime? nextETE)
         {
             try
             {

@@ -2,7 +2,7 @@
 {
     public class EteSubmissionDto
     {
-        public string Explanation { get; set; }
+        public string? Explanation { get; set; } = string.Empty;
         public IFormFile? File { get; set; }
     }
 }

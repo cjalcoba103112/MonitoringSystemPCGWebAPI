@@ -6,6 +6,6 @@ namespace Repositories.Interfaces
     public interface IEmailEteCommunicationRepository : IGenericRepository<EmailEteCommunication>
     {
         Task<EmailEteCommunication?> GetByToken(string token);
-        Task<EmailEteCommunication?> GetByPersonnelId(int id);
+        Task<EmailEteCommunication?> GetByPersonnelId(int id ,DateTime? nextETE);
     }
 }

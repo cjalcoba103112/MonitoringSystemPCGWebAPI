@@ -9,5 +9,8 @@ namespace Models.NonTables
         public DateTime? NextETE { get; set; }
         public double? ETEDaysRemaining { get; set; }
         public string? Remarks { get; set; }
+
+        public string? EmailCategory { get; set; }
+        public string? SupportingDocument { get; set; }
     }
 }

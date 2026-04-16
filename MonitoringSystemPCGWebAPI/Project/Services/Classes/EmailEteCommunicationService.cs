@@ -185,21 +185,37 @@ namespace Services.Classes
             return await _emailEteCommunicationRepository.GetByToken(token);
         }
 
-        public async Task<EmailEteCommunication?> GetByPersonnelId(int id)
+        public async Task<EmailEteCommunication?> GetByPersonnelId(int id, DateTime? nextETE)
         {
-            return await _emailEteCommunicationRepository.GetByPersonnelId(id);
+            return await _emailEteCommunicationRepository.GetByPersonnelId(id, nextETE);
         }
 
         public async Task<EmailEteCommunication?> UpdateAsync(EmailEteCommunication data, IFormFile? supportingDocument)
         {
+            string? oldFilePath = data.SupportingDocument;
+
             if (supportingDocument != null)
             {
                 string newFilename = _fileUtility.GetRandomFileName(supportingDocument.FileName);
-                string path = await _fileUtility.CreateAsync(newFilename, supportingDocument.OpenReadStream());
-                data.SupportingDocument = "/documents/etes/" + newFilename;
+
+                string relativePath = "/documents/etes/" + newFilename;
+
+                await _fileUtility.CreateAsync(newFilename, supportingDocument.OpenReadStream());
+
+                data.SupportingDocument = relativePath;
             }
 
-            return await _emailEteCommunicationRepository.UpdateAsync(data);
+            var result = await _emailEteCommunicationRepository.UpdateAsync(data);
+
+            if (result != null && supportingDocument != null && !string.IsNullOrEmpty(oldFilePath))
+            {
+               
+                string oldFileName = Path.GetFileName(oldFilePath);
+
+                _fileUtility.Delete(oldFileName);
+            }
+
+            return result;
         }
 
         public async Task<IEnumerable<EmailEteCommunication>> GetAllAsync(EmailEteCommunication? filter)
@@ -232,5 +248,7 @@ namespace Services.Classes
         {
             return await _emailEteCommunicationRepository.BulkMergeAsync(data);
         }
+
+        
     }
 }

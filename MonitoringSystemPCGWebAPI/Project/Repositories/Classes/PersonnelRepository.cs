@@ -14,7 +14,7 @@ namespace Repositories.Classes
     public class PersonnelRepository : GenericRepository<Personnel>, IPersonnelRepository
     {
         private readonly DayUtility _dayUtility = new DayUtility();
-
+        private readonly IEmailEteCommunicationRepository _emailEteCommunicationRepository = new EmailEteCommunicationRepository();
         public async Task<Personnel?> GetByIdAsync(int id)
         {
           return await _context.Personnel
@@ -184,10 +184,6 @@ namespace Repositories.Classes
                 DateTime? dateOfLatestReEnlistment = personnel?.EnlistmentRecords?.LastOrDefault()?.EnlistmentStart ?? personnel?.DateEnlisted;
 
 
-
-
-
-
                 if (dateOfLatestReEnlistment.HasValue)
                 {
                     while (dateOfLatestReEnlistment.Value.AddYears(3) < today)
@@ -230,7 +226,8 @@ namespace Repositories.Classes
                     yearsInService--;
                 }
 
-
+               var emailEte =  await _emailEteCommunicationRepository.GetByPersonnelId(personnel?.PersonnelId??0, nextEte);
+            
                 result.Add(new EnlistedPersonnelETE
                 {
                     Email = personnel.Email,
@@ -254,6 +251,8 @@ namespace Repositories.Classes
                     NextETE = nextEte,
                     YearsInService = yearsInService,
                     Remarks = remarks,
+                    EmailCategory = emailEte?.EmailCategory,
+                    SupportingDocument = emailEte?.SupportingDocument
                 });
             }
 

@@ -3,21 +3,27 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using Repositories.Interfaces;
 using RTools_NTS.Util;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Repositories.Classes
 {
     public class EmailEteCommunicationRepository : GenericRepository<EmailEteCommunication>, IEmailEteCommunicationRepository
     {
-        public async Task<EmailEteCommunication?> GetByPersonnelId(int id)
+        public async Task<EmailEteCommunication?> GetByPersonnelId(int id, DateTime? nextETE)
         {
-            var data = await _context.EmailEteCommunication
-               .Include(c => c.Personnel)
-                   .ThenInclude(p => p.Rank)
-               .FirstOrDefaultAsync(c => c.PersonnelId == id);
+            var query = _context.EmailEteCommunication
+                .Include(c => c.Personnel)
+                    .ThenInclude(p => p.Rank)
+                .AsQueryable();
 
-            if (data == null) return null;
+            query = query.Where(c => c.PersonnelId == id);
 
-            return data;
+            if (nextETE.HasValue)
+            {
+                query = query.Where(c => c.NextEte.HasValue && c.NextEte.Value.Date == nextETE.Value.Date);
+            }
+           
+            return await query.OrderByDescending(c=>c.Id).FirstOrDefaultAsync();
         }
 
         public async Task<EmailEteCommunication?> GetByToken(string token)
@@ -25,9 +31,8 @@ namespace Repositories.Classes
             var data = await _context.EmailEteCommunication
                 .Include(c => c.Personnel)
                     .ThenInclude(p => p.Rank)
+                .OrderByDescending(c => c.Id)
                 .FirstOrDefaultAsync(c => c.CommunicationToken == token);
-
-            if (data == null) return null; 
 
             if (data.ExpiryDateTime < DateTime.UtcNow)
             {

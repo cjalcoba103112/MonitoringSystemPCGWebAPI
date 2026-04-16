@@ -9,8 +9,8 @@ namespace ApplicationContexts
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connectionString1 = "Server=LAPTOP-G6M745HP\\SQLEXPRESS;Database=RTCA_E_MonitoringSystem;Trusted_Connection=True;Encrypt=false";
-            string connectionString = "Server=LAPTOP-NPIJTS0A\\SQLEXPRESS;Database=RTCA_E_MonitoringSystem;Trusted_Connection=True;Encrypt=false";
+            string connectionString = "Server=LAPTOP-G6M745HP\\SQLEXPRESS;Database=RTCA_E_MonitoringSystem;Trusted_Connection=True;Encrypt=false";
+            string connectionString1 = "Server=LAPTOP-NPIJTS0A\\SQLEXPRESS;Database=RTCA_E_MonitoringSystem;Trusted_Connection=True;Encrypt=false";
 
             //string connectionString = "Server=db47734.public.databaseasp.net; Database=db47734; User Id=db47734; Password=Mq5#+Ee6p7J-; Encrypt=True; TrustServerCertificate=True; MultipleActiveResultSets=True;";
             optionsBuilder.UseSqlServer(connectionString);
