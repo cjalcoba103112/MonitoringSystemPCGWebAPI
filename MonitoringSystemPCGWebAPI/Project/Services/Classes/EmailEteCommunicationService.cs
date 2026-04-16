@@ -16,19 +16,17 @@ namespace Services.Classes
         private readonly IEmailSenderUtility _emailSenderUtility;
         private readonly IPersonnelRepository _personnelRepository;
         private readonly IFileUtility _fileUtility;
-
-        private string baseUrl = "";
+        IConfigurationRoot _config = new AppUtility().GetConfiguration();
         public EmailEteCommunicationService(IEmailEteCommunicationRepository emailEteCommunicationRepository, IEmailSenderUtility emailSenderUtility, IPersonnelRepository personnelRepository, IAppUtility appUtility)
         {
             _emailEteCommunicationRepository = emailEteCommunicationRepository;
             _emailSenderUtility = emailSenderUtility;
             _personnelRepository = personnelRepository;
             _fileUtility = new FileUtility("wwwroot/documents/etes");
-            baseUrl = new AppUtility().GetConfiguration()["FrontEnd:BaseUrl"] ?? "";
 
         }
 
-        private string RequestExplanationHtmlBody(Personnel personnel, string remarks, string token, DateTime? expiryDateTime, string humanizedRemaining, DateTime eteDate)
+        private string RequestExplanationHtmlBody(Personnel personnel, string remarks, string token, DateTime? expiryDateTime, string humanizedRemaining, DateTime eteDate, string baseUrl)
         {
             string replyUrl = $"{baseUrl}/ete-explanation/{token}";
             string htmlBody = $@"
@@ -91,7 +89,7 @@ namespace Services.Classes
             return htmlBody;
         }
 
-        private string NotifyHtmlBody(Personnel personnel, string remarks, string token, DateTime? expiryDateTime, string humanizedRemaining, DateTime eteDate)
+        private string NotifyHtmlBody(Personnel personnel, string remarks, string token, DateTime? expiryDateTime, string humanizedRemaining, DateTime eteDate,string baseUrl)
         {
             // Use the specific notification route for warnings
             string replyUrl = $"{baseUrl}/ete-notify/{token}";
@@ -147,6 +145,7 @@ namespace Services.Classes
         }
         public async Task<EmailEteCommunication?> InsertAsync(EmailEteCommunication data)
         {
+            string baseUrl = _config["FrontEnd:BaseUrl"]?? "http://rtca-e-monitoring.runasp.net";
             data.CommunicationToken = Guid.NewGuid().ToString();
             data.SentDateTime = DateTime.Now;
             data.ExpiryDateTime = DateTime.Now.AddDays(7);
@@ -169,11 +168,11 @@ namespace Services.Classes
 
             if (data.EmailCategory == "REQUEST EXPLANATION")
             {
-                htmlBody = RequestExplanationHtmlBody(personnel, data?.Remarks ?? "", data.CommunicationToken, data.ExpiryDateTime, humanizedRemaining, eteDate);
+                htmlBody = RequestExplanationHtmlBody(personnel, data?.Remarks ?? "", data.CommunicationToken, data.ExpiryDateTime, humanizedRemaining, eteDate, baseUrl);
             }
             else
             {
-                htmlBody = NotifyHtmlBody(personnel, data?.Remarks ?? "", data.CommunicationToken, data.ExpiryDateTime, humanizedRemaining, eteDate);
+                htmlBody = NotifyHtmlBody(personnel, data?.Remarks ?? "", data.CommunicationToken, data.ExpiryDateTime, humanizedRemaining, eteDate, baseUrl);
             }
             await _emailSenderUtility.SendEmailAsync(personnel.Email, subject, htmlBody);
 

@@ -47,9 +47,9 @@ namespace MonitoringSystemPCGWebAPI.Project.Controllers
                 string token = _jwtUtility.GenerateToken(user?.UserId ?? 0);
                 var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = true,   
-                    Secure = true,    
-                    SameSite = SameSiteMode.Strict,
+                    HttpOnly = true,    
+                    Secure = Request.IsHttps,
+                    SameSite = SameSiteMode.Lax,
                     Expires = DateTime.UtcNow.AddHours(1)
                 };
 
