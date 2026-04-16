@@ -29,6 +29,8 @@ services.AddScoped<IUsertblService, UsertblService>();
             services.AddScoped<ILeaveTypesService, LeaveTypesService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IOtpVerificationsService, OtpVerificationsService>();
+            services.AddScoped<IEmailEteCommunicationService, EmailEteCommunicationService>();
+
         }
     }
 }

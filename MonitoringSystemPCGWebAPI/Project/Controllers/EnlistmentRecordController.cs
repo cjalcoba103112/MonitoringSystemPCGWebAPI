@@ -10,14 +10,15 @@ namespace ApiControllers
     public class EnlistmentRecordController : ControllerBase
     {
         private readonly IEnlistmentRecordService _enlistmentRecordService;
+        
 
         public EnlistmentRecordController(IEnlistmentRecordService enlistmentRecordService)
         {
             _enlistmentRecordService = enlistmentRecordService;
         }
 
-        [HttpGet("list")]
-        public async Task<IActionResult> GetAllAsync([FromQuery]EnlistmentRecord filter)
+        [HttpPost("request-explanation")]
+        public async Task<IActionResult> GetAllAsync([FromQuery] EnlistmentRecord filter)
         {
             try
             {
@@ -28,8 +29,9 @@ namespace ApiControllers
             {
                 return BadRequest(ex.Message);
             }
-           
+
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {

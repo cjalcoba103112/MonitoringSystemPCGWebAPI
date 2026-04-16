@@ -26,6 +26,8 @@ namespace Repositories
             services.AddScoped<IPersonnelPromotionRepository, PersonnelPromotionRepository>();
             services.AddScoped<ILeaveTypesRepository, LeaveTypesRepository>();
             services.AddScoped<IOtpVerificationsRepository, OtpVerificationsRepository>();
+            services.AddScoped<IEmailEteCommunicationRepository, EmailEteCommunicationRepository>();
+
         }
     }
 }

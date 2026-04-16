@@ -16,6 +16,7 @@ namespace Services.Classes
 
         public async Task<EnlistmentRecord?> InsertAsync(EnlistmentRecord data)
         {
+
             return await _enlistmentRecordRepository.InsertAsync(data);
         }
 
@@ -28,7 +29,7 @@ namespace Services.Classes
         {
             return await _enlistmentRecordRepository.GetAllAsync(filter);
         }
-
+        
         public async Task<EnlistmentRecord?> GetByIdAsync(int id)
         {
             return await _enlistmentRecordRepository.GetByIdAsync(id);
