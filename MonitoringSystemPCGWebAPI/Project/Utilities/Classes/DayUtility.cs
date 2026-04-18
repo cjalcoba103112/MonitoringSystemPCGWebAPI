@@ -9,12 +9,12 @@ namespace Utilities.Classes
         {
             if (start == null || end == null) throw new Exception("Invalid dates");
 
-         
-            if (start.Value.Date == end.Value.Date) return 1;
-
             decimal days = 0;
-            for (var date = start.Value.Date; date < end.Value.Date; date = date.AddDays(1))
+
+            // Change < to <= to make the end date inclusive
+            for (var date = start.Value.Date; date <= end.Value.Date; date = date.AddDays(1))
             {
+                // Logic: If it's mandatory, skip counting the weekends
                 if (isMandatory == true &&
                    (date.DayOfWeek == DayOfWeek.Saturday ||
                     date.DayOfWeek == DayOfWeek.Sunday))
