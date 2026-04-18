@@ -20,7 +20,7 @@ namespace MonitoringSystemPCGWebAPI.Project.Controllers
         {
             try
             {
-                decimal days = _dayUtility.CountDays(start,end,isMandatory);
+                decimal days =  _dayUtility.CountDays(start,end,isMandatory);
 
                 return Ok(days);
             }
