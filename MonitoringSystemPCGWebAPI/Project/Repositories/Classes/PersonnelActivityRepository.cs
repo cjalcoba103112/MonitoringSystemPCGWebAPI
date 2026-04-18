@@ -37,5 +37,17 @@ namespace Repositories.Classes
                 .OrderByDescending(a => a.StartDate)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<PersonnelActivity>> GetOverDue24HoursActivities(PersonnelActivity personnelActivity)
+        {
+            var cutoff = DateTime.Now.AddHours(-24);
+
+            var overdueActivities = await _context.PersonnelActivity
+                 .Where(pa => pa.EndDate <= cutoff         
+                           && pa.IsFullyApproved == true) 
+                 .ToListAsync();
+
+            return overdueActivities;
+        }
     }
 }

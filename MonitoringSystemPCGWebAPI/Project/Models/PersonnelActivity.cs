@@ -27,5 +27,7 @@ namespace Models
 
 		public string? Reason { get; set; }
 
+		public bool? IsWarningSent { get; set; }
+		public bool? IsFullyApproved { get; set; }
     }
 }

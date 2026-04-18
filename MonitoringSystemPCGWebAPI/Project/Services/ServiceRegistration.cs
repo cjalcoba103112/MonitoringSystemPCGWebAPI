@@ -2,10 +2,11 @@
 //In Program.cs (Main project) add this 
 //builder.Services.AddServices();
 
-using Services.Interfaces;
-using Services.Classes;
-using MonitoringSystemPCGWebAPI.Project.Services.Interfaces;
+using ApplicationContexts;
 using MonitoringSystemPCGWebAPI.Project.Services.Classes;
+using MonitoringSystemPCGWebAPI.Project.Services.Interfaces;
+using Services.Classes;
+using Services.Interfaces;
 
 namespace Services
 {
@@ -13,6 +14,7 @@ namespace Services
     {
         public static void AddServices(this IServiceCollection services)
         {
+            
             services.AddScoped<IActivityTypeService, ActivityTypeService>();
 services.AddScoped<IDepartmentService, DepartmentService>();
 services.AddScoped<IPersonnelService, PersonnelService>();

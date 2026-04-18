@@ -35,11 +35,11 @@ builder.Services.AddHostedService(sp =>
 {
     return new ActivityStatusUpdater(sp, TimeSpan.FromMinutes(1));
 });
-builder.Services.AddHostedService<EteExpiryMonitorService>();
+builder.Services.AddHostedService<LeaveWarningBackgroundService>();
 
 builder.Services.AddSwaggerGen(opt =>
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "WMS V2 API", Version = "v1" });
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Monitoring System", Version = "v1" });
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,

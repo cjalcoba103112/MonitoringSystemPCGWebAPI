@@ -2,8 +2,9 @@
 //In Program.cs (Main project) add this 
 //builder.Services.AddRepositories();
 
-using Repositories.Interfaces;
+using ApplicationContexts;
 using Repositories.Classes;
+using Repositories.Interfaces;
 
 namespace Repositories
 {
@@ -11,6 +12,7 @@ namespace Repositories
     {
         public static void AddRepositories(this IServiceCollection services)
         {
+            services.AddDbContext<ApplicationContext>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IActivityTypeRepository, ActivityTypeRepository>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();

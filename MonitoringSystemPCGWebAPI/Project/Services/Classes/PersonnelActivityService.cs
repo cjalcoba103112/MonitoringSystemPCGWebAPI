@@ -1,4 +1,5 @@
 
+using Microsoft.EntityFrameworkCore;
 using Models;
 using MonitoringSystemPCGWebAPI.Project.Models.NonTables;
 using Repositories.Interfaces;
@@ -211,6 +212,7 @@ $@"<div style=""font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; ma
     );
 
     data.Remarks = remarks;
+    data.IsFullyApproved = true;
     data.Status = _personnelActivityRepository.GetActivityStatus(data.StartDate, data.EndDate, data.Status);
     
     return await _personnelActivityRepository.UpdateAsync(data);
@@ -296,10 +298,10 @@ $@"<div style=""font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; ma
             return await _personnelActivityRepository.UpdateAsync(data);
         }
 
-        public async Task<IEnumerable<PersonnelActivityDTO>> GetAllAsync(PersonnelActivity? filter)
+        public async Task<IEnumerable<PersonnelActivityDTO>> GetAllAsync(PersonnelActivity? filter = null)
         {
             IEnumerable<PersonnelActivity> personnelActivities = await _personnelActivityRepository
-                .GetAllAsync(filter, x => x.Personnel.Rank, x => x.ActivityType);
+                .GetAllAsync(filter, x => x.Personnel.Rank, x => x.ActivityType,x=>x.Personnel);
 
             var sortedData = personnelActivities
                 .OrderBy(x => x.Status != "Pending Approval")
@@ -333,6 +335,89 @@ $@"<div style=""font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; ma
         public async Task<IEnumerable<PersonnelActivity>> BulkMergeAsync(List<PersonnelActivity> data)
         {
             return await _personnelActivityRepository.BulkMergeAsync(data);
+        }
+
+        public async Task SendWarningEmailAsync(PersonnelActivity activity)
+        {
+            string emailLayout = GenerateLeaveReminderEmail(activity);
+
+            string subject = $"⏳ FINAL NOTICE: Leave Activity Ending ({activity?.EndDate:dd MMM yyyy})";
+
+           
+            await _emailSenderUtility.SendEmailAsync(
+                activity?.Personnel?.Email,
+                subject,
+                emailLayout
+            );
+        }
+        private string GenerateLeaveReminderEmail(PersonnelActivity activity)
+        {
+            var personnel = activity?.Personnel;
+            var activityType = activity?.ActivityType;
+
+            int totalDays = (activity.EndDate.HasValue && activity.StartDate.HasValue)
+                ? (activity.EndDate.Value - activity.StartDate.Value).Days + 1
+                : 0;
+
+            string formattedReason = activity.Reason?.Replace("\n", "<br>") ?? "No reason provided";
+
+            return $@"
+<div style=""font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f0f0f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);"">
+    
+    <div style=""background-color: #faad14; padding: 30px; text-align: center;"">
+        <div style=""background: white; width: 60px; height: 60px; border-radius: 50%; display: inline-block; line-height: 60px; margin-bottom: 15px;"">
+            <span style=""color: #faad14; font-size: 30px;"">⚠️</span>
+        </div>
+        <h2 style=""margin: 0; color: #ffffff; font-size: 22px; letter-spacing: 0.5px;"">{activityType?.ActivityTypeName} Activity Reminder</h2>
+    </div>
+
+    <div style=""padding: 30px; background-color: #ffffff;"">
+        <p style=""font-size: 16px; color: #333;"">Hello <strong>{personnel?.Rank?.RankCode} {personnel?.FirstName} {personnel?.LastName} {personnel?.SerialNumber}</strong>,</p>
+        
+        <p style=""font-size: 15px; color: #666; line-height: 1.5;"">
+            This is an automated reminder that your scheduled <strong>{activityType?.ActivityTypeName}</strong> is reaching its end date within the next 24 hours.
+        </p>
+
+        <div style=""background-color: #fff1f0; border: 1px dashed #ff4d4f; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0;"">
+            <span style=""color: #cf1322; font-size: 18px; font-weight: 800; display: block;"">LESS THAN 24 HOURS REMAINING</span>
+            <span style=""color: #5f6368; font-size: 13px;"">Scheduled End Date: <strong>{activity?.EndDate:dd MMMM yyyy}</strong></span>
+        </div>
+
+        <div style=""margin: 25px 0; border-top: 2px solid #fff7e6; border-bottom: 2px solid #fff7e6; padding: 15px 0;"">
+            <h4 style=""margin: 0 0 10px 0; color: #d48806; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;"">Activity Summary</h4>
+            <table style=""width: 100%; font-size: 15px; color: #444;"">
+                 <tr>
+                    <td style=""padding: 8px 0;""><strong>Title:</strong></td>
+                    <td style=""padding: 8px 0; text-align: right;"">{activity?.Title ?? "N/A"}</td>
+                </tr>
+                <tr>
+                    <td style=""padding: 8px 0; vertical-align: top;""><strong>Reason:</strong></td>
+                    <td style=""padding: 8px 0; text-align: right; line-height: 1.6; color: #444;"">
+                        {formattedReason}
+                    </td>
+                </tr>
+                <tr>
+                    <td style=""padding: 8px 0;""><strong>Full Period:</strong></td>
+                    <td style=""padding: 8px 0; text-align: right;"">{activity.StartDate?.ToString("dd MMM yyyy")} — {activity.EndDate?.ToString("dd MMM yyyy")}</td>
+                </tr>
+                <tr>
+                    <td style=""padding: 8px 0;""><strong>Total Duration:</strong></td>
+                    <td style=""padding: 8px 0; text-align: right;"">{totalDays} Day(s)</td>
+                </tr>
+            </table>
+        </div>
+
+        <p style=""font-size: 14px; color: #855800; background-color: #fffbe6; padding: 15px; border-radius: 6px; border-left: 4px solid #faad14;"">
+            <strong>Important:</strong> Please ensure all pending tasks are handed over and you are prepared to resume duties as scheduled following the expiration of this leave.
+        </p>
+    </div>
+
+    <div style=""background-color: #fafafa; padding: 20px; text-align: center; border-top: 1px solid #f0f0f0;"">
+        <p style=""margin: 0; font-size: 12px; color: #999;"">Sent by <strong>RTCA E-Monitoring Automated Service</strong></p>
+        <p style=""margin: 5px 0 0 0; font-size: 11px; color: #bbb;"">Server Time: {DateTime.Now:dd MMM yyyy • h:mm tt}</p>
+        <p style=""margin: 5px 0 0 0; font-size: 11px; color: #bbb;"">© 2026 RTC Aurora. All rights reserved.</p>
+    </div>
+</div>";
         }
     }
 }

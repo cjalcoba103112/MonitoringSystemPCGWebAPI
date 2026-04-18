@@ -58,7 +58,7 @@ namespace MonitoringSystemPCGWebAPI.Project.BackgroundServiceProvider
             using var scope = _serviceProvider.CreateScope();
             var _emailSenderUtility = scope.ServiceProvider.GetRequiredService<IEmailSenderUtility>();
 
-            // 1. Dynamic Variables & Calculations
+            
             string fullName = $"{record.Rank?.RankCode} {record.FirstName} {record.MiddleName} {record.LastName} {record.SerialNumber}";
             string serialNumber = record.SerialNumber ?? "N/A";
             double daysLeft = record.ETEDaysRemaining ?? 0;
@@ -68,17 +68,14 @@ namespace MonitoringSystemPCGWebAPI.Project.BackgroundServiceProvider
             string adminRemarks = record.Remarks ?? "No specific remarks.";
             string currentDate = DateTime.Now.ToString("dd MMMM yyyy").ToUpper();
 
-            // 2. Term Progress Calculation (Assuming 3-year term = 1095 days)
             double totalTermDays = 1095;
             double percentageUsed = Math.Clamp(Math.Round(((totalTermDays - daysLeft) / totalTermDays) * 100), 0, 100);
 
-            // 3. Dynamic Theme Coloring
-            string headerColor = "#059669"; // Default Success (Green)
-            if (daysLeft <= 25) headerColor = "#dc2626";      // Critical (Red)
-            else if (daysLeft <= 50) headerColor = "#f59e0b"; // Warning (Amber)
-            else if (daysLeft <= 100) headerColor = "#2563eb"; // Info (Blue)
+            string headerColor = "#059669"; 
+            if (daysLeft <= 25) headerColor = "#dc2626";     
+            else if (daysLeft <= 50) headerColor = "#f59e0b"; 
+            else if (daysLeft <= 100) headerColor = "#2563eb"; 
 
-            // 4. Enhanced HTML Body with Variables
             string htmlBody = $@"
     <div style=""font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 650px; margin: 20px auto; border: 1px solid #d1d5db; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.12); background-color: #ffffff;"">
         
