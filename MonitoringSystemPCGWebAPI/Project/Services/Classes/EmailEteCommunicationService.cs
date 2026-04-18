@@ -116,7 +116,7 @@ namespace Services.Classes
 
             <div style=""background-color: #fff9e6; border: 1px dashed #e6b800; padding: 15px; border-radius: 6px; margin-bottom: 25px;"">
                 <p style=""margin: 0; font-size: 13px; color: #856404;"">
-                    <strong>Note:</strong> Per regulations, if documents are not finalized before the <b>11-month mark</b>, the system will automatically require a <b>Formal Statement of Explanation</b>.
+                    <strong>Note:</strong>Please submit your re-enlistment folder to <b> ADMIN DIVISION, RTC-AURORA,</b> on or before <b> One year <b/> prior to your expiration term of enlistment (ETE). Failure to comply will be dealt with accordingly!
                 </p>
             </div>
 
