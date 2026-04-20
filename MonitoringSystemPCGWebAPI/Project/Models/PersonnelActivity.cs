@@ -8,29 +8,29 @@ namespace Models
 {
     public class PersonnelActivity
     {
-		[Key]
-		public int? PersonnelActivityId {get;set;}
-		public int? PersonnelId {get;set;}
+        [Key]
+        public int? PersonnelActivityId { get; set; }
+        public int? PersonnelId { get; set; }
 
-		[ForeignKey("PersonnelId")]
+        [ForeignKey("PersonnelId")]
         [JsonIgnore]
-        public Personnel? Personnel {get;set;}
-		public int? ActivityTypeId {get;set;}
-        [ForeignKey("ActivityTypeId")]	
-        public ActivityType? ActivityType {get;set;}
+        public Personnel? Personnel { get; set; }
+        public int? ActivityTypeId { get; set; }
+        [ForeignKey("ActivityTypeId")]
+        public ActivityType? ActivityType { get; set; }
+        public string? Title { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string? Status { get; set; }
+        public string? Result { get; set; }
+        public string? Remarks { get; set; }
+        public decimal? Days { get; set; }
 
-		public ApprovalProccess? ApprovalProcess { get; set; }
-		public string? Title {get;set;}
-		public DateTime? StartDate {get;set;}
-		public DateTime? EndDate {get;set;}
-		public string? Status {get;set;}
-		public string? Result {get;set;}
-		public string? Remarks {get;set;}
-		public decimal? Days { get; set; }
-
-		public string? Reason { get; set; }
-
-		public bool? IsWarningSent { get; set; }
-		public bool? IsFullyApproved { get; set; }
+        public string? Reason { get; set; }
+        public bool? IsWarningSent { get; set; }
+        public bool? IsFullyApproved { get; set; }
+        public int? ApprovalProccessId { get; set; }
+        [ForeignKey("ApprovalProccessId")]
+        public ApprovalProccess? ApprovalProccess { get; set; }
     }
 }

@@ -83,6 +83,8 @@ namespace Services.Classes
             }
             return result;
         }
+
+        
         public async Task<IEnumerable<Personnel>> GetETE(Personnel? filter)
         {
             IEnumerable<Personnel> personnels = await _personnelRepository.GetAllAsync(filter);

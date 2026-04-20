@@ -30,6 +30,7 @@ namespace ApiControllers
             }
            
         }
+        
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {

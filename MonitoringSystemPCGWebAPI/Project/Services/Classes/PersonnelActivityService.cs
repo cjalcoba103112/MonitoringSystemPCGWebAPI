@@ -42,17 +42,17 @@ namespace Services.Classes
 
             var activityType = await _activityTypeRepository.GetByIdAsync(data.ActivityTypeId ?? 0);
 
-          
+
             decimal totalDays = _dayUtility.CountDays(data.StartDate, data.EndDate, activityType.IsMandatoryLeave);
 
-           
+
             var credits = await _personnelRepository.GetPersonnelCreditsAsync(
                 personnelId: data.PersonnelId ?? 0,
                 activityTypeId: data.ActivityTypeId ?? 0,
-                date:data.StartDate
+                date: data.StartDate
             );
 
-            decimal remainingCredits = credits?.FirstOrDefault()?.RemainingCredits??0;
+            decimal remainingCredits = credits?.FirstOrDefault()?.RemainingCredits ?? 0;
             decimal remainingApprovedCredits = remainingCredits - totalDays;
 
             await _emailSenderUtility.SendEmailAsync(personnel?.Email, $"Leave Request Received (Pending) - {activityType?.ActivityTypeName}",
@@ -126,46 +126,47 @@ namespace Services.Classes
             );
 
 
-           
-            data.Status = "Pending Approval";
-            var activity = await _personnelActivityRepository.InsertAsync(data);
+
             var approvalProccess = new ApprovalProccess
             {
-                ActivityId = activity?.PersonnelActivityId ??0,
-                CurrentStage=1,
+                CurrentStage = 1,
 
             };
-            await _approvalProccessRepository.InsertAsync(approvalProccess);
+            var approval = await _approvalProccessRepository.InsertAsync(approvalProccess);
+            data.ApprovalProccessId = approval?.Id;
+            data.Status = "Pending Approval";
+
+            var activity = await _personnelActivityRepository.InsertAsync(data);
 
             return activity;
         }
 
-       public async Task<PersonnelActivity?> ApproveAsync(int? personnelActivityId, string? remarks)
-{
-    var data = await _personnelActivityRepository.GetByIdAsync(personnelActivityId ?? 0);
-    if (data == null) throw new Exception("No Activity found");
+        public async Task<PersonnelActivity?> ApproveAsync(int? personnelActivityId, string? remarks)
+        {
+            var data = await _personnelActivityRepository.GetByIdAsync(personnelActivityId ?? 0);
+            if (data == null) throw new Exception("No Activity found");
 
-    var personnel = await _personnelRepository.GetByIdAsync(data.PersonnelId ?? 0);
-    if (personnel == null) throw new Exception("No Personnel found");
+            var personnel = await _personnelRepository.GetByIdAsync(data.PersonnelId ?? 0);
+            if (personnel == null) throw new Exception("No Personnel found");
 
-    var activityType = await _activityTypeRepository.GetByIdAsync(data.ActivityTypeId ?? 0);
-    
-    // Calculate days for this specific request
-    decimal totalDays = _dayUtility.CountDays(data.StartDate, data.EndDate, activityType.IsMandatoryLeave);
+            var activityType = await _activityTypeRepository.GetByIdAsync(data.ActivityTypeId ?? 0);
 
-    // Fetch the credits as they stand CURRENTLY (before this approval is finalized in DB)
-    var credits = await _personnelRepository.GetPersonnelCreditsAsync(
-       personnelId: data.PersonnelId ?? 0,
-       activityTypeId: data.ActivityTypeId ?? 0,
-       date: data.StartDate
-    );
+            // Calculate days for this specific request
+            decimal totalDays = _dayUtility.CountDays(data.StartDate, data.EndDate, activityType.IsMandatoryLeave);
 
-    // Calculate the new balance
-    decimal currentBalance = credits?.FirstOrDefault()?.RemainingCredits ?? 0;
-    decimal remainingCredits = currentBalance - totalDays;
+            // Fetch the credits as they stand CURRENTLY (before this approval is finalized in DB)
+            var credits = await _personnelRepository.GetPersonnelCreditsAsync(
+               personnelId: data.PersonnelId ?? 0,
+               activityTypeId: data.ActivityTypeId ?? 0,
+               date: data.StartDate
+            );
 
-    await _emailSenderUtility.SendEmailAsync(personnel?.Email, $"Leave Request Approved - {activityType?.ActivityTypeName}",
-$@"<div style=""font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f0f0f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);"">
+            // Calculate the new balance
+            decimal currentBalance = credits?.FirstOrDefault()?.RemainingCredits ?? 0;
+            decimal remainingCredits = currentBalance - totalDays;
+
+            await _emailSenderUtility.SendEmailAsync(personnel?.Email, $"Leave Request Approved - {activityType?.ActivityTypeName}",
+        $@"<div style=""font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f0f0f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);"">
     <div style=""background-color: #52c41a; padding: 30px; text-align: center;"">
         <div style=""background: white; width: 60px; height: 60px; border-radius: 50%; display: inline-block; line-height: 60px; margin-bottom: 15px;"">
             <span style=""color: #52c41a; font-size: 30px;"">✔</span>
@@ -222,14 +223,14 @@ $@"<div style=""font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; ma
         <p style=""margin: 5px 0 0 0; font-size: 11px; color: #bbb;"">© 2026 RTC Aurora E-Monitoring. All rights reserved.</p>
     </div>
 </div>"
-    );
+            );
 
-    data.Remarks = remarks;
-    data.IsFullyApproved = true;
-    data.Status = _personnelActivityRepository.GetActivityStatus(data.StartDate, data.EndDate, data.Status);
-    
-    return await _personnelActivityRepository.UpdateAsync(data);
-}
+            data.Remarks = remarks;
+            data.IsFullyApproved = true;
+            data.Status = _personnelActivityRepository.GetActivityStatus(data.StartDate, data.EndDate, data.Status);
+
+            return await _personnelActivityRepository.UpdateAsync(data);
+        }
 
         public async Task<PersonnelActivity?> DeclineAsync(int? personnelActivityId, string? remarks)
         {
@@ -314,7 +315,7 @@ $@"<div style=""font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; ma
         public async Task<IEnumerable<PersonnelActivityDTO>> GetAllAsync(PersonnelActivity? filter = null)
         {
             IEnumerable<PersonnelActivity> personnelActivities = await _personnelActivityRepository
-                .GetAllAsync(filter, x => x.Personnel.Rank, x => x.ActivityType,x=>x.Personnel);
+                .GetAllAsync(filter, x => x.Personnel.Rank, x => x.ActivityType, x => x.Personnel, x => x.ApprovalProccess);
 
             var sortedData = personnelActivities
                 .OrderBy(x => x.Status != "Pending Approval")
@@ -356,7 +357,7 @@ $@"<div style=""font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; ma
 
             string subject = $"⏳ FINAL NOTICE: Leave Activity Ending ({activity?.EndDate:dd MMM yyyy})";
 
-           
+
             await _emailSenderUtility.SendEmailAsync(
                 activity?.Personnel?.Email,
                 subject,

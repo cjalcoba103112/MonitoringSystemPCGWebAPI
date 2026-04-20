@@ -66,7 +66,7 @@ namespace Repositories.Classes
                 }
             }
 
-            foreach (var person in query.ToList())
+            foreach (var person in query.ToArray()  )
             {
                 // 1. Resolve the ID outside the query
                 int targetPersonnelId = person?.PersonnelId ?? 0;
