@@ -28,6 +28,9 @@ namespace Models
         [ForeignKey("UserId")]
         public Usertbl? User {  get; set; }
 
+        [NotMapped]
+        public string? DutyStatus { get; set; }
+
         public string? EmploymentStatus { get; set; }
         public DateTime? DateEnlisted { get; set; }
 

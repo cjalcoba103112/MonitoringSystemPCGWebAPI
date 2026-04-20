@@ -20,3 +20,7 @@ builder.Services.AddRepositories();
 builder.Services.AddServices();
 builder.Services.AddUtilities();
 builder.Services.AddHttpContextAccessor(); 
+
+Create a migration	Add-Migration NameOfMigration
+Apply to database	Update-Database
+Remove last migration	Remove-Migration

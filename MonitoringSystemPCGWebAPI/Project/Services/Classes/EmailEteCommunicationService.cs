@@ -38,7 +38,7 @@ namespace Services.Classes
     <div style='padding: 30px; line-height: 1.6; color: #333333;'>
         <div style='text-align: right; margin-bottom: 10px;'>
             <span style='background-color: #cf1322; color: white; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold;'>
-                ACTION REQUIRED: BELOW 11 MONTHS
+                ACTION REQUIRED: BELOW 1 YEAR
             </span>
         </div>
 
@@ -47,7 +47,7 @@ namespace Services.Classes
         <p>This is a formal request for explanation regarding your <strong>Expiration of Term of Enlistment (ETE)</strong> status.</p>
         
         <p style='color: #cf1322; font-weight: bold;'>
-            Our records show you have less than 11 months remaining before your ETE, and the required documentation has not yet been finalized.
+            Our records show you have less than 1 year remaining before your ETE, and the required documentation has not yet been finalized.
         </p>
 
         <div style='background-color: #fff1f0; border: 1px solid #ffa39e; border-radius: 8px; padding: 15px; margin: 20px 0;'>
@@ -116,7 +116,7 @@ namespace Services.Classes
 
             <div style=""background-color: #fff9e6; border: 1px dashed #e6b800; padding: 15px; border-radius: 6px; margin-bottom: 25px;"">
                 <p style=""margin: 0; font-size: 13px; color: #856404;"">
-                    <strong>Note:</strong>Please submit your re-enlistment folder to <b> ADMIN DIVISION, RTC-AURORA,</b> on or before <b> One year <b/> prior to your expiration term of enlistment (ETE). Failure to comply will be dealt with accordingly!
+                    <strong>Note:</strong> Please submit your re-enlistment folder to <b> ADMIN DIVISION, RTC-AURORA, </b> on or before <b> One year </b> prior to your expiration term of enlistment (ETE). Failure to comply will be dealt with accordingly!
                 </p>
             </div>
 

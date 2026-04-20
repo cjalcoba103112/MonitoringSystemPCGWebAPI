@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Repositories.Interfaces;
-using RTools_NTS.Util;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Repositories.Classes
 {

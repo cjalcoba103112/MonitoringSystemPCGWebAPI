@@ -18,7 +18,8 @@ namespace Services.Classes
         private readonly IEmailSenderUtility _emailSenderUtility;
         private readonly IAutoMapperUtility _mapper;
         private readonly IDayUtility _dayUtility;
-        public PersonnelActivityService(IPersonnelActivityRepository personnelActivityRepository, IPersonnelRepository personnelRepository, IAutoMapperUtility mapper, IEmailSenderUtility emailSenderUtility, IActivityTypeRepository activityTypeRepository, IDayUtility dayUtility)
+        private readonly IApprovalProccessRepository _approvalProccessRepository;
+        public PersonnelActivityService(IPersonnelActivityRepository personnelActivityRepository, IPersonnelRepository personnelRepository, IAutoMapperUtility mapper, IEmailSenderUtility emailSenderUtility, IActivityTypeRepository activityTypeRepository, IDayUtility dayUtility, IApprovalProccessRepository approvalProccessRepository)
         {
             _personnelActivityRepository = personnelActivityRepository;
             _personnelRepository = personnelRepository;
@@ -26,6 +27,7 @@ namespace Services.Classes
             _emailSenderUtility = emailSenderUtility;
             _activityTypeRepository = activityTypeRepository;
             _dayUtility = dayUtility;
+            _approvalProccessRepository = approvalProccessRepository;
         }
         public async Task<IEnumerable<PersonnelActivity>> GetActivitiesByPersonnelAsync(int personnelId, int? year = null)
         {
@@ -123,8 +125,19 @@ namespace Services.Classes
     </div>"
             );
 
+
+           
             data.Status = "Pending Approval";
-            return await _personnelActivityRepository.InsertAsync(data);
+            var activity = await _personnelActivityRepository.InsertAsync(data);
+            var approvalProccess = new ApprovalProccess
+            {
+                ActivityId = activity?.PersonnelActivityId ??0,
+                CurrentStage=1,
+
+            };
+            await _approvalProccessRepository.InsertAsync(approvalProccess);
+
+            return activity;
         }
 
        public async Task<PersonnelActivity?> ApproveAsync(int? personnelActivityId, string? remarks)

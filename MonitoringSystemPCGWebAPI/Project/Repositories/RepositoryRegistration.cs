@@ -29,7 +29,8 @@ namespace Repositories
             services.AddScoped<ILeaveTypesRepository, LeaveTypesRepository>();
             services.AddScoped<IOtpVerificationsRepository, OtpVerificationsRepository>();
             services.AddScoped<IEmailEteCommunicationRepository, EmailEteCommunicationRepository>();
-
+            services.AddScoped<IPersonnelDutyLogsRepository, PersonnelDutyLogsRepository>();
+            services.AddScoped<IApprovalProccessRepository, ApprovalProccessRepository>();
         }
     }
 }

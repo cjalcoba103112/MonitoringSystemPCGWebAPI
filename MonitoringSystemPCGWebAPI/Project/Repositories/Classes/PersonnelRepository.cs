@@ -17,30 +17,29 @@ namespace Repositories.Classes
         private readonly IEmailEteCommunicationRepository _emailEteCommunicationRepository = new EmailEteCommunicationRepository();
         public async Task<Personnel?> GetByIdAsync(int id)
         {
-          return await _context.Personnel
-               .Include(p => p.PersonnelActivities)
-                   .ThenInclude(a => a.ActivityType)
-               .Include(p => p.EnlistmentRecords)
-               .Include(p => p.Rank)
-                   .ThenInclude(a => a.RankCategory)
-               .Include(p => p.Department)
-               .Include(p => p.PersonnelPromotions)
-               .Include(p=>p.User)
-               .Where(p=>p.PersonnelId == id)
-               .FirstOrDefaultAsync();
+            return await _context.Personnel
+                 .Include(p => p.PersonnelActivities)
+                     .ThenInclude(a => a.ActivityType)
+                 .Include(p => p.EnlistmentRecords)
+                 .Include(p => p.Rank)
+                     .ThenInclude(a => a.RankCategory)
+                 .Include(p => p.Department)
+                 .Include(p => p.PersonnelPromotions)
+                 .Include(p => p.User)
+                 .Where(p => p.PersonnelId == id)
+                 .FirstOrDefaultAsync();
 
         }
         public async Task<IEnumerable<Personnel>> GetAllAsync(Personnel? filter = null)
         {
             IQueryable<Personnel> query = _context.Personnel
-                .Include(p => p.PersonnelActivities)
-                    .ThenInclude(a => a.ActivityType)
-                .Include(p => p.EnlistmentRecords)
-                .Include(p => p.Rank)
-                    .ThenInclude(a => a.RankCategory)
-                .Include(p => p.Department)
-                .Include(p => p.PersonnelPromotions);
-
+    .Include(p => p.PersonnelActivities)
+        .ThenInclude(a => a.ActivityType)
+    .Include(p => p.EnlistmentRecords)
+    .Include(p => p.Rank)
+        .ThenInclude(a => a.RankCategory)
+    .Include(p => p.Department)
+    .Include(p => p.PersonnelPromotions);
 
             // Apply dynamic filter
             if (filter != null)
@@ -65,6 +64,21 @@ namespace Repositories.Classes
                     var lambda = Expression.Lambda<Func<Personnel, bool>>(combined, parameter);
                     query = query.Where(lambda);
                 }
+            }
+
+            foreach (var person in query.ToList())
+            {
+                // 1. Resolve the ID outside the query
+                int targetPersonnelId = person?.PersonnelId ?? 0;
+
+                // 2. Use the local variable inside the query
+                var latestLog = _context.PersonnelDutyLogs
+                    .Where(c => c.PersonnelId == targetPersonnelId && (c.IsActive ?? false))
+                    .OrderByDescending(c => c.Id)
+                    .FirstOrDefault();
+
+                // 3. Extract the string safely after the data is retrieved
+                string status = latestLog?.Status ?? "Active";
             }
 
             query = query.OrderBy(p => p.Rank!.RankLevel)
@@ -110,7 +124,7 @@ namespace Repositories.Classes
                             a.StartDate.Value.Year == targetYear &&
                             a.StartDate.Value.Month >= startMonthOfPeriod &&
                             a.StartDate.Value.Month <= endMonthOfPeriod &&
-                            (a.Status != "Declined" && a.Status !="Pending Approval" && a.Status != "Suspended")
+                            (a.Status != "Declined" && a.Status != "Pending Approval" && a.Status != "Suspended")
                         )
                         .Sum(a => _dayUtility.CountDays(a.StartDate!.Value, a.EndDate!.Value, isMandatory))
                         ?? 0;
@@ -226,8 +240,8 @@ namespace Repositories.Classes
                     yearsInService--;
                 }
 
-               var emailEte =  await _emailEteCommunicationRepository.GetByPersonnelId(personnel?.PersonnelId??0, nextEte);
-            
+                var emailEte = await _emailEteCommunicationRepository.GetByPersonnelId(personnel?.PersonnelId ?? 0, nextEte);
+
                 result.Add(new EnlistedPersonnelETE
                 {
                     Email = personnel.Email,
@@ -304,7 +318,7 @@ namespace Repositories.Classes
 
             return new DateTime(now.Year, months, 1);
         }
-      
+
     }
 
 }

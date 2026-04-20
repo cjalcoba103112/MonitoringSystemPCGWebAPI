@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using MonitoringSystemPCGWebAPI.Project.Models;
 
 namespace Models
 {
@@ -17,6 +18,8 @@ namespace Models
 		public int? ActivityTypeId {get;set;}
         [ForeignKey("ActivityTypeId")]	
         public ActivityType? ActivityType {get;set;}
+
+		public ApprovalProccess? ApprovalProcess { get; set; }
 		public string? Title {get;set;}
 		public DateTime? StartDate {get;set;}
 		public DateTime? EndDate {get;set;}

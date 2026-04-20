@@ -1,4 +1,5 @@
 
+using ApplicationContexts;
 using Models;
 using Models.NonTables;
 using MonitoringSystemPCGWebAPI.Project.Models.NonTables;
@@ -13,6 +14,7 @@ namespace Services.Classes
     {
         private readonly IPersonnelRepository _personnelRepository;
         private readonly FileUtility _fileUtility = new FileUtility("wwwroot/images/profiles");
+        private readonly ApplicationContext _context = new ApplicationContext();
         public PersonnelService(IPersonnelRepository personnelRepository)
         {
             _personnelRepository = personnelRepository;
@@ -69,9 +71,17 @@ namespace Services.Classes
 
         public async Task<IEnumerable<Personnel>> GetAllAsync(Personnel? filter)
         {
+            List<Personnel> result = new List<Personnel>();
             IEnumerable<Personnel> personnels = await _personnelRepository.GetAllAsync(filter);
-
-            return personnels;
+            
+            foreach ( var person in personnels)
+            {
+                var duty =  _context.PersonnelDutyLogs.Where(p => p.PersonnelId == person.PersonnelId && (p.IsActive ?? false)).OrderByDescending(c=>c.Id).FirstOrDefault();
+                if (duty?.Status == "Reassined" || duty?.Status == "Inactive") continue;
+                person.DutyStatus = duty?.Status ?? "Active";
+                result.Add(person);
+            }
+            return result;
         }
         public async Task<IEnumerable<Personnel>> GetETE(Personnel? filter)
         {
