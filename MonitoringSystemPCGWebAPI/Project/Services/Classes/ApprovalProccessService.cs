@@ -11,10 +11,11 @@ namespace Services.Classes
     public class ApprovalProccessService : IApprovalProccessService
     {
         private readonly IApprovalProccessRepository _approvalProccessRepository;
-
-        public ApprovalProccessService(IApprovalProccessRepository approvalProccessRepository)
+        private readonly IPersonnelActivityRepository _personnelActivityRepository;
+        public ApprovalProccessService(IApprovalProccessRepository approvalProccessRepository, IPersonnelActivityRepository personnelActivityRepository)
         {
             _approvalProccessRepository = approvalProccessRepository;
+            _personnelActivityRepository = personnelActivityRepository;
         }
 
         public async Task<ApprovalProccess?> InsertAsync(ApprovalProccess data)
@@ -22,9 +23,59 @@ namespace Services.Classes
             return await _approvalProccessRepository.InsertAsync(data);
         }
 
-        public async Task<ApprovalProccess?> UpdateAsync(ApprovalProccess data)
+        public async Task<ApprovalProccess?> UpdateByCMAA(ApprovalProccess data)
         {
-            return await _approvalProccessRepository.UpdateAsync(data);
+            var approval = await _approvalProccessRepository.GetByIdAsync(data?.Id??0);
+            if (approval == null) throw new Exception("Approval Process is not found.");
+
+            approval.CmaaRemarks = data.CmaaRemarks;
+            approval.CmaaId = data.CmaaId;
+            approval.CmaaIsApprove = data.CmaaIsApprove;
+            approval.CurrentStage = (approval.CmaaIsApprove ?? false ) ? 2 : approval.CurrentStage;
+
+            return await _approvalProccessRepository.UpdateAsync(approval);
+        }
+        public async Task<ApprovalProccess?> UpdateByOIC(ApprovalProccess data)
+        {
+            var approval = await _approvalProccessRepository.GetByIdAsync(data?.Id ?? 0);
+            if (approval == null) throw new Exception("Approval Process is not found.");
+
+            approval.OicRemarks = data.OicRemarks;
+            approval.OicId = data.OicId;
+            approval.OicIsApprove = data.OicIsApprove;
+            approval.CurrentStage = (approval.OicIsApprove ?? false) ? 3 : approval.CurrentStage;
+
+            return await _approvalProccessRepository.UpdateAsync(approval);
+        }
+
+        public async Task<ApprovalProccess?> UpdateByCSG(ApprovalProccess data)
+        {
+            var approval = await _approvalProccessRepository.GetByIdAsync(data?.Id ?? 0);
+            if (approval == null) throw new Exception("Approval Process is not found.");
+
+            approval.CsgRemarks = data.CsgRemarks;
+            approval.CsgId = data.CsgId;
+            approval.CsgIsApprove = data.CsgIsApprove;
+            approval.CurrentStage = (approval.CsgIsApprove ?? false) ? 4 : approval.CurrentStage;
+
+            return await _approvalProccessRepository.UpdateAsync(approval);
+        }
+        public async Task<ApprovalProccess?> UpdateByCO(ApprovalProccess data,int personnelActivityId)
+        {
+            var approval = await _approvalProccessRepository.GetByIdAsync(data?.Id ?? 0);
+            if (approval == null) throw new Exception("Approval Process is not found.");
+
+            var activity = await _personnelActivityRepository.GetByIdAsync(personnelActivityId);
+            if (activity == null) throw new Exception("No Activity found.");
+
+            approval.CoRemarks = data.CoRemarks;
+            approval.CoId = data.CoId;
+            approval.CoIsApprove = data.CoIsApprove;
+
+            activity.IsFullyApproved = (approval.CoIsApprove ?? false);
+            await _personnelActivityRepository.UpdateAsync(activity);
+
+            return await _approvalProccessRepository.UpdateAsync(approval);
         }
 
         public async Task<IEnumerable<ApprovalProccess>> GetAllAsync(ApprovalProccess? filter)
@@ -56,6 +107,11 @@ namespace Services.Classes
         public async Task<IEnumerable<ApprovalProccess>> BulkMergeAsync(List<ApprovalProccess> data)
         {
             return await _approvalProccessRepository.BulkMergeAsync(data);
+        }
+
+        public async Task<ApprovalProccess?> UpdateAsync(ApprovalProccess data)
+        {
+            return await _approvalProccessRepository.UpdateAsync(data);
         }
     }
 }

@@ -11,9 +11,47 @@ namespace ApiControllers
     {
         private readonly IApprovalProccessService _approvalProccessService;
 
+
         public ApprovalProccessController(IApprovalProccessService approvalProccessService)
         {
             _approvalProccessService = approvalProccessService;
+        }
+
+        [HttpPost("cmaa")]
+        public async Task<ActionResult<ApprovalProccess>> UpdateByCMAA([FromBody] ApprovalProccess data)
+        {
+            var result = await _approvalProccessService.UpdateByCMAA(data);
+            if (result == null) return NotFound("Approval record not found.");
+
+            return Ok(result);
+        }
+
+        [HttpPost("oic")]
+        public async Task<ActionResult<ApprovalProccess>> UpdateByOIC([FromBody] ApprovalProccess data)
+        {
+            var result = await _approvalProccessService.UpdateByOIC(data);
+            if (result == null) return NotFound("Approval record not found.");
+
+            return Ok(result);
+        }
+
+        [HttpPost("csg")]
+        public async Task<ActionResult<ApprovalProccess>> UpdateByCSG([FromBody] ApprovalProccess data)
+        {
+            var result = await _approvalProccessService.UpdateByCSG(data);
+            if (result == null) return NotFound("Approval record not found.");
+
+            return Ok(result);
+        }
+
+        [HttpPost("co/{personnelActivityId}")]
+        public async Task<ActionResult<ApprovalProccess>> UpdateByCO([FromBody] ApprovalProccess data, int personnelActivityId)
+        {
+            // The CO method includes the extra personnelActivityId parameter as per your Task signature
+            var result = await _approvalProccessService.UpdateByCO(data, personnelActivityId);
+            if (result == null) return NotFound("Approval record or Activity ID not found.");
+
+            return Ok(result);
         }
 
         [HttpGet("list")]
