@@ -20,5 +20,11 @@ namespace Utilities.Classes
             if (string.IsNullOrEmpty(strUserId)) return null;
             return int.Parse(strUserId);
         }
+        public int? GetPersonnelId()
+        {
+            string? strPersonnelId = _httpContextAccessor?.HttpContext?.User?.FindFirst("PersonnelId")?.Value;
+            if (string.IsNullOrEmpty(strPersonnelId)) return null;
+            return int.Parse(strPersonnelId);
+        }
     }
 }

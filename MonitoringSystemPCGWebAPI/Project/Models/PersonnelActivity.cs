@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using MonitoringSystemPCGWebAPI.Project.Models;
 
 namespace Models
 {
@@ -32,5 +31,7 @@ namespace Models
         public int? ApprovalProccessId { get; set; }
         [ForeignKey("ApprovalProccessId")]
         public ApprovalProccess? ApprovalProccess { get; set; }
+
+        public string? PersonnelType { get; set; } //Director, Officer, Non-Officer
     }
 }

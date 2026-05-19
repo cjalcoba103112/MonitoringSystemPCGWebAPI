@@ -7,6 +7,8 @@ namespace Repositories.Classes
 {
     public class ApprovalProccessRepository : GenericRepository<ApprovalProccess>, IApprovalProccessRepository
     {
-        
+      
+         
     }
+    
 }

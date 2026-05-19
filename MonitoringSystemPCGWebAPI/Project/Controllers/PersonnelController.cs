@@ -43,6 +43,20 @@ namespace ApiControllers
             }
 
         }
+        [HttpGet("list/only")]
+        public async Task<IActionResult> GetAllOnlyAsync()
+        {
+            try
+            {
+                IEnumerable<Personnel> data = await _personnelService.GetAllPersonnelOnly();
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
 
         [HttpGet("list")]
         public async Task<IActionResult> GetAllAsync([FromQuery] Personnel filter)
@@ -74,7 +88,7 @@ namespace ApiControllers
             }
         }
             [HttpPost]
-            public async Task<IActionResult> InsertAsync([FromForm] Personnel    personnel, IFormFile? profileImage)
+            public async Task<IActionResult> InsertAsync([FromForm] PersonnelSave personnel, IFormFile? profileImage)
             {
                 try
                 {
@@ -88,7 +102,7 @@ namespace ApiControllers
             }
 
             [HttpPatch("{id}")]
-            public async Task<IActionResult> UpdateAsync(int id, [FromForm] Personnel personnel, IFormFile? profileImage)
+            public async Task<IActionResult> UpdateAsync(int id, [FromForm] PersonnelSave personnel, IFormFile? profileImage)
             {
                 try
                 {

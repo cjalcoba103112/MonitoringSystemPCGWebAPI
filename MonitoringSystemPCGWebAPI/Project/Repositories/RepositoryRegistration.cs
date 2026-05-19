@@ -31,6 +31,8 @@ namespace Repositories
             services.AddScoped<IEmailEteCommunicationRepository, EmailEteCommunicationRepository>();
             services.AddScoped<IPersonnelDutyLogsRepository, PersonnelDutyLogsRepository>();
             services.AddScoped<IApprovalProccessRepository, ApprovalProccessRepository>();
+            services.AddScoped<IWorkflowStepsRepository, WorkflowStepsRepository>();
+            services.AddScoped<IActivityAppealRepository, ActivityAppealRepository>();
         }
     }
 }

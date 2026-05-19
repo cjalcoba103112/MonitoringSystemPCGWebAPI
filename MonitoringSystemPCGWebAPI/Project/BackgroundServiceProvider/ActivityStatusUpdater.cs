@@ -44,11 +44,11 @@ namespace MonitoringSystemPCGWebAPI.Project.BackgroundServiceProvider
             var activities = await _personnelActivityRepository.GetAllAsync();
 
 
-            var result = activities.ToList().Where(c => c.Status != "Suspended" && c.Status != "Inactive" && c.Status != "Declined" && c.Status !="Pending Approval");
+            var result = activities.ToList().Where(c => c.Status != "Suspended" && c.Status != "Inactive" && c.Status != "Declined" && c.Status !="Pending Approval" && c.Status != "Appeal");
 
             foreach (var r in result.ToList())
             {
-                if (r.Status == "Suspended" || r.Status == "Declined" || r.Status == "Pending Approval") return;
+                if (r.Status == "Suspended" || r.Status == "Declined" || r.Status == "Pending Approval" || r.Status == "Appeal") return;
 
                 if (r.EndDate.HasValue && today > r.EndDate.Value.Date)
                     r.Status = "Inactive";

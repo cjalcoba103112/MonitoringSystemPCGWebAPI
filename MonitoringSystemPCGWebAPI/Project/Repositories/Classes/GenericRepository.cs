@@ -15,11 +15,12 @@ namespace Repositories.Classes
     {
         public ApplicationContext _context = new ApplicationContext();
 
-        public virtual async Task<T?> InsertAsync(T entity)
+        public virtual async Task<T> InsertAsync(T entity)
         {
-            await _context.Set<T>().AddAsync(entity);
+            
+            var entry = await _context.Set<T>().AddAsync(entity);
             await _context.SaveChangesAsync();
-            return entity;
+            return entry.Entity;
         }
 
         public virtual async Task<T?> GetFirstOrDefaultAsync(
@@ -165,13 +166,19 @@ namespace Repositories.Classes
             // Bulk Insert
             if (entitiesToInsert.Any())
             {
-                await _context.BulkInsertAsync(entitiesToInsert);
+                foreach(var item in entitiesToInsert)
+                {
+                    await InsertAsync(item);
+                }
             }
 
             // Bulk Update
             if (entitiesToUpdate.Any())
             {
-                await _context.BulkUpdateAsync(entitiesToUpdate);
+                foreach (var item in entitiesToUpdate)
+                {
+                    await UpdateAsync(item);
+                }
             }
 
             await _context.SaveChangesAsync();

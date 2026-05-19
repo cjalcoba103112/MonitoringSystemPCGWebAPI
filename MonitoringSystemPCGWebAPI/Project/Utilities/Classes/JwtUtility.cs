@@ -17,11 +17,12 @@ namespace Utilities.Classes
             _config = appUtility.GetConfiguration();
         }
 
-        public string GenerateToken(int userId)
+        public string GenerateToken(int userId,int personnelId)
         {
             var claims = new List<Claim>
             {
-                new Claim("UserId", userId.ToString() ?? "")
+                new Claim("UserId", userId.ToString() ?? ""),
+                new Claim("PersonnelId", personnelId.ToString() ?? "")
             };
 
             var jwtToken = new JwtSecurityToken(

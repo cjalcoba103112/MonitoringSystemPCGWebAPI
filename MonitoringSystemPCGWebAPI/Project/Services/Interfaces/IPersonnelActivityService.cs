@@ -7,11 +7,13 @@ namespace Services.Interfaces
     public interface IPersonnelActivityService
     {
         Task SendWarningEmailAsync(PersonnelActivity activity);
+        Task<PersonnelActivity?> InsertSchoolingAsync(PersonnelActivity data);
         Task<PersonnelActivity?> InsertAsync(PersonnelActivity data);
-        Task<PersonnelActivity?> ApproveAsync(int? personnelActivityId, string? remarks);
+        Task<PersonnelActivity?> ApproveAsync(int? personnelActivityId, string? remarks, int? approverId = null);
         Task<PersonnelActivity?> DeclineAsync(int? personnelActivityId, string? remarks);
         Task<IEnumerable<PersonnelActivity>> GetActivitiesByPersonnelAsync(int personnelId, int? year = null);
         Task<PersonnelActivity?> UpdateAsync(PersonnelActivity data);
+        Task<IEnumerable<PersonnelActivityDTO>> GetPending(PendingActivity pendingActivity);
         Task<IEnumerable<PersonnelActivityDTO>> GetAllAsync(PersonnelActivity? filter = null);
         Task<PersonnelActivity?> GetByIdAsync(int id);
         Task<PersonnelActivity?> DeleteByIdAsync(int id);

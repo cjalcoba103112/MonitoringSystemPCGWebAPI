@@ -15,8 +15,18 @@ namespace Models
 		public string? Salt {get;set;}
         [JsonIgnore]
         public string? HashedPassword {get;set;}
+        [NotMapped]
+        public string? Password {get;set;}
+        public int? PersonnelId { get; set; }
+        public Personnel? Personnel { get; set; }
 
         public string? Email { get; set; }
+        public bool? IsDefaultPassword { get; set; }
+        public string? ChangePasswordToken { get; set; }
+        public bool? IsActive { get; set; }
+        public int? RoleId { get; set; }
+        [ForeignKey("RoleId")]
+        public Role? Role { get; set; }
 
     }
 }

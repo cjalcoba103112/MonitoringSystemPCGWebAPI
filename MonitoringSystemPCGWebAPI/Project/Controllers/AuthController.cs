@@ -44,18 +44,22 @@ namespace MonitoringSystemPCGWebAPI.Project.Controllers
             try
             {
                 Usertbl? user = await _authService.Login(parameters);
-                string token = _jwtUtility.GenerateToken(user?.UserId ?? 0);
-                var cookieOptions = new CookieOptions
+                string token = _jwtUtility.GenerateToken(user?.UserId ?? 0, user?.Personnel?.PersonnelId ?? 0);
+                //var cookieOptions = new CookieOptions
+                //{
+                //    HttpOnly = true,    
+                //    Secure = Request.IsHttps,
+                //    SameSite = SameSiteMode.Lax,
+                //    Expires = DateTime.UtcNow.AddHours(12)
+                //};
+
+                //Response.Cookies.Append("jwt_token", token, cookieOptions);
+
+                return Ok(new
                 {
-                    HttpOnly = true,    
-                    Secure = Request.IsHttps,
-                    SameSite = SameSiteMode.Lax,
-                    Expires = DateTime.UtcNow.AddHours(1)
-                };
-
-                Response.Cookies.Append("jwt_token", token, cookieOptions);
-
-                return Ok(user);
+                    User = user,
+                    Token = token
+                });
                     
             }
             catch (Exception ex)
@@ -86,6 +90,22 @@ namespace MonitoringSystemPCGWebAPI.Project.Controllers
             try
             {
                 var user = await _authService.Signup(parameters);
+                return Ok(user);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        [HttpGet("token/{token}")]
+        public async Task<IActionResult> GetUserByChangePasswordToken(string token)
+        {
+            try
+            {
+                var user = await _authService.GetUserByChangePasswordToken(token);
                 return Ok(user);
 
             }

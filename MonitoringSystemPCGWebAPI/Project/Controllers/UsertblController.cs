@@ -77,6 +77,24 @@ namespace ApiControllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPatch("change-default-password/{id}")]
+        public async Task<IActionResult> ChangeDefaultPassword(int id, [FromBody] Usertbl usertbl)
+        {
+            try
+            {
+                if (id != usertbl.UserId) return BadRequest("Id mismatched.");
+
+                Usertbl? data = await _usertblService.GetByIdAsync(id);
+                if (data == null) return NotFound();
+
+                Usertbl? updatedData = await _usertblService.ChangeDefaultPassword(usertbl);
+                return Ok(updatedData);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteByIdAsync(int id)
         {

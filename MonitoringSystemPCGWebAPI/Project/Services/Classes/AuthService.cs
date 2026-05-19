@@ -4,6 +4,7 @@ using MonitoringSystemPCGWebAPI.Project.Services.Interfaces;
 using Repositories.Classes;
 using Repositories.Interfaces;
 using Utilities.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MonitoringSystemPCGWebAPI.Project.Services.Classes
 {
@@ -19,17 +20,36 @@ namespace MonitoringSystemPCGWebAPI.Project.Services.Classes
             _jwtUtility = jwtUtility;
         }
 
+        public async Task<Usertbl?> GetUserByChangePasswordToken(string token)
+        {
+            var user = _usertblRepository.GetByChangePasswordToken(token);
+            if (user == null) throw new Exception("Invalid Username or password");
+
+            return user;
+        }
         public async Task<Usertbl?> Login(Login data)
         {
-            var user = await _usertblRepository.GetFirstOrDefaultAsync(new Usertbl
-            {
-                UserName = data.UserName,
-            });
+            var user = _usertblRepository.GetUsernameOrEmail(data.UsernameOrEmail);
 
             if (user == null) throw new Exception("Invalid Username or password");
 
             var encryptedPassword = _encryptUtility.GenerateHashedPassword(data.Password, user?.Salt);
             if (encryptedPassword != user.HashedPassword) throw new Exception("Invalid Username or password");
+            return user;
+        }
+        public async Task<Usertbl?> ChangePassword(ChangePassword data)
+        {
+            var user = await Login(new Models.NonTables.Login
+            {
+                UsernameOrEmail = data.UsernameOrEmail,
+                Password = data.OldPassword
+            });
+            if (user == null) throw new Exception("Invalid Username or password");
+
+            var newEncryptPassword = _encryptUtility.GenerateHashedPassword(data.NewPassword, user?.Salt);
+            user.HashedPassword = newEncryptPassword;
+
+            await _usertblRepository.UpdateAsync(user);
             return user;
         }
 

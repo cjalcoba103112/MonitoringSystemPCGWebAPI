@@ -34,6 +34,9 @@ namespace Services
             services.AddScoped<IEmailEteCommunicationService, EmailEteCommunicationService>();
             services.AddScoped<IPersonnelDutyLogsService, PersonnelDutyLogsService>();
             services.AddScoped<IApprovalProccessService, ApprovalProccessService>();
+            services.AddScoped<IWorkflowStepsService, WorkflowStepsService>();
+            services.AddScoped<IActivityAppealService, ActivityAppealService>();
+
         }
     }
 }

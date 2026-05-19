@@ -5,6 +5,7 @@ namespace Services.Interfaces
 {
     public interface ISidebarRoleMappingService
     {
+        Task<IEnumerable<SidebarRoleMapping>> SyncRolePermissionsAsync(int roleId, List<int> sidebarIds);
         Task<SidebarRoleMapping?> InsertAsync(SidebarRoleMapping data);
         Task<SidebarRoleMapping?> UpdateAsync(SidebarRoleMapping data);
         Task<IEnumerable<SidebarRoleMapping>> GetAllAsync(SidebarRoleMapping? filter);

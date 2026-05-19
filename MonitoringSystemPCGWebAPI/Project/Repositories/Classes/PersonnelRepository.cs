@@ -25,7 +25,6 @@ namespace Repositories.Classes
                      .ThenInclude(a => a.RankCategory)
                  .Include(p => p.Department)
                  .Include(p => p.PersonnelPromotions)
-                 .Include(p => p.User)
                  .Where(p => p.PersonnelId == id)
                  .FirstOrDefaultAsync();
 
@@ -33,13 +32,12 @@ namespace Repositories.Classes
         public async Task<IEnumerable<Personnel>> GetAllAsync(Personnel? filter = null)
         {
             IQueryable<Personnel> query = _context.Personnel
-    .Include(p => p.PersonnelActivities)
-        .ThenInclude(a => a.ActivityType)
-    .Include(p => p.EnlistmentRecords)
+    //.Include(p => p.PersonnelActivities)
+    //    .ThenInclude(a => a.ActivityType)
+    //.Include(p => p.EnlistmentRecords)
     .Include(p => p.Rank)
         .ThenInclude(a => a.RankCategory)
-    .Include(p => p.Department)
-    .Include(p => p.PersonnelPromotions);
+    .Include(p => p.Department);
 
             // Apply dynamic filter
             if (filter != null)
@@ -50,7 +48,12 @@ namespace Repositories.Classes
                 foreach (var property in typeof(Personnel).GetProperties())
                 {
                     var value = property.GetValue(filter);
-                    if (value == null) continue; // skip nulls
+                    if (value == null) continue;
+
+                    if (property.PropertyType.IsGenericType || !property.PropertyType.IsPublic || property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                    {
+                        continue;
+                    }
 
                     var member = Expression.Property(parameter, property);
                     var constant = Expression.Constant(value, property.PropertyType);
@@ -166,13 +169,17 @@ namespace Repositories.Classes
                     var value = property.GetValue(filter);
                     if (value == null) continue;
 
+                    if (property.PropertyType.IsGenericType || !property.PropertyType.IsPublic || property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                    {
+                        continue;
+                    }
+
                     var member = Expression.Property(parameter, property);
                     var constant = Expression.Constant(value, property.PropertyType);
                     var equalsCheck = Expression.Equal(member, constant);
 
                     combined = combined == null ? equalsCheck : Expression.AndAlso(combined, equalsCheck);
                 }
-
                 if (combined != null)
                 {
                     var lambda = Expression.Lambda<Func<Personnel, bool>>(combined, parameter);

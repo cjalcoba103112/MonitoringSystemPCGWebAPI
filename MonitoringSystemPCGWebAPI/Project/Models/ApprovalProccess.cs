@@ -1,44 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations;
+
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-using Models;
 
 namespace Models
 {
     public class ApprovalProccess
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? Id { get; set; }
+        public int? CurrentStage { get; set; }
+        public int? StageOneId { get; set; }
+        [ForeignKey("StageOneId")]
+        public Personnel? ApproverOne { get; set; }
+        public string? StageOneRemarks { get; set; }
+        public bool? StageOneIsApprove { get; set; }
+        public int? StageTwoId { get; set; }
+        [ForeignKey("StageTwoId")]
+        public Personnel? ApproverTwo { get; set; }
+        public string? StageTwoRemarks { get; set; }
+        public bool? StageTwoIsApprove { get; set; }
+        public int? StageThreeId { get; set; }
+        public string? StageThreeRemarks { get; set; }
+        public bool? StageThreeIsApprove { get; set; }
+        [ForeignKey("StageThreeId")]
+        public Personnel? ApproverThree { get; set; }
+        public int? StageFourId { get; set; }
+        [ForeignKey("StageFourId")]
+        public Personnel? ApproverFour { get; set; }
+        public string? StageFourRemarks { get; set; }
+        public bool? StageFourIsApprove { get; set; }
 
-        // Stage 1: CMAA
-        public int? CmaaId { get; set; }
-        public string? CmaaRemarks { get; set; }
-        public bool? CmaaIsApprove { get; set; }
-
-        [ForeignKey("CmaaId")]
-        public Personnel? Cmaa { get; set; }
-
-        // Stage 2: OIC
-        public int? OicId { get; set; }
-        public string? OicRemarks { get; set; }
-        public bool? OicIsApprove { get; set; }
-        [ForeignKey("OicId")]
-        public Personnel? Oic { get; set; }
-
-        // Stage 3: CSG
-        public int? CsgId { get; set; }
-        public string? CsgRemarks { get; set; }
-        public bool? CsgIsApprove { get; set; }
-        [ForeignKey("CsgId")]
-        public Personnel? Csg { get; set; }
-
-        // Stage 4: Final CO
-        public int? CoId { get; set; }
-        public string? CoRemarks { get; set; }
-        public bool? CoIsApprove { get; set; }
-        [ForeignKey("CoId")]
-        public Personnel? Co { get; set; }
-
-        public int? CurrentStage { get; set; } = 1;
     }
 }

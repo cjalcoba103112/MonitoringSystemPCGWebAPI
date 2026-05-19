@@ -5,6 +5,7 @@ namespace Services.Interfaces
 {
     public interface IUsertblService
     {
+        Task<Usertbl?> ChangeDefaultPassword(Usertbl data);
         Task<Usertbl?> InsertAsync(Usertbl data);
         Task<Usertbl?> UpdateAsync(Usertbl data);
         Task<IEnumerable<Usertbl>> GetAllAsync(Usertbl? filter);

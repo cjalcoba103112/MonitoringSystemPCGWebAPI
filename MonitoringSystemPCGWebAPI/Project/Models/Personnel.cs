@@ -21,15 +21,13 @@ namespace Models
 
         public int? DepartmentId { get; set; }
 
-        [ForeignKey("DepartmentId")]
-        public Department? Department { get; set; }  
-        public int? UserId { get; set; }
 
-        [ForeignKey("UserId")]
-        public Usertbl? User {  get; set; }
+        [ForeignKey("DepartmentId")]
+        public Department? Department { get; set; }
 
         [NotMapped]
         public string? DutyStatus { get; set; }
+        public bool? HasAccount { get; set; }
 
         public string? EmploymentStatus { get; set; }
         public DateTime? DateEnlisted { get; set; }
@@ -37,9 +35,15 @@ namespace Models
         public DateTime? DateEnteredService { get; set; }
 
         public string? Email { get; set; }
-        public DateTime? DateOfLastPromotion { get; set;  }
+        public DateTime? DateOfLastPromotion { get; set; }
+        //public ICollection<Department>? Designations { get; set; }
         public ICollection<PersonnelActivity>? PersonnelActivities { get; set; }
         public ICollection<EnlistmentRecord>? EnlistmentRecords { get; set; }
-        public ICollection<PersonnelPromotion>? PersonnelPromotions { get;set;  }
+        public ICollection<PersonnelPromotion>? PersonnelPromotions { get; set; }
+    }
+
+    public class PersonnelSave : Personnel
+    {
+        public ICollection<int>? OtherDepartmentIds { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace Models
 		[Key]
 		public int? SidebarId {get;set;}
 		public string? SidebarName {get;set;}
-
+        public string? Path { get; set; }
+        public string? KeyName { get; set; }
     }
 }

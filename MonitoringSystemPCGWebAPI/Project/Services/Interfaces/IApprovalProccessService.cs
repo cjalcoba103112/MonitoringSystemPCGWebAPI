@@ -5,10 +5,10 @@ namespace Services.Interfaces
 {
     public interface IApprovalProccessService
     {
-        Task<ApprovalProccess?> UpdateByCO(ApprovalProccess data, int personnelActivityId);
-        Task<ApprovalProccess?> UpdateByCSG(ApprovalProccess data);
-        Task<ApprovalProccess?> UpdateByOIC(ApprovalProccess data);
-        Task<ApprovalProccess?> UpdateByCMAA(ApprovalProccess data);
+        Task<ApprovalProccess?> UpdateFinalStage(ApprovalProccess data, int personnelActivityId);
+        Task<ApprovalProccess?> UpdateStageThree(ApprovalProccess data);
+        Task<ApprovalProccess?> UpdateStageTwo(ApprovalProccess data);
+        Task<ApprovalProccess?> UpdateStageOne(ApprovalProccess data);
         Task<ApprovalProccess?> InsertAsync(ApprovalProccess data);
         Task<ApprovalProccess?> UpdateAsync(ApprovalProccess data);
         Task<IEnumerable<ApprovalProccess>> GetAllAsync(ApprovalProccess? filter);

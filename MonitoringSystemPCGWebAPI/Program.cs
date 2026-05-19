@@ -5,14 +5,21 @@ using MonitoringSystemPCGWebAPI.Project.BackgroundServiceProvider;
 using Repositories;
 using Repositories.Interfaces;
 using Services;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        }); 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -66,6 +73,7 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -74,15 +82,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateLifetime = true,
         /* ValidIssuer = builder.Configuration["Jwt:Issuer"],*/
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            context.Token = context.Request.Cookies["jwt_token"];
-            return Task.CompletedTask;
-        }
     };
 });
 

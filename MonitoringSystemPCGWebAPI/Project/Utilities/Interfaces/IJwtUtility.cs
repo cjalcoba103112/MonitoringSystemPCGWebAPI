@@ -5,6 +5,6 @@ namespace Utilities.Interfaces
 {
     public interface IJwtUtility
     {
-        string GenerateToken(int userId);
+        string GenerateToken(int userId,int personnelId);
     }
 }

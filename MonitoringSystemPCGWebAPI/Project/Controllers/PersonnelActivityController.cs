@@ -21,6 +21,13 @@ namespace ApiControllers
         {
             try
             {
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized(new { message = "User session not found." });
+
+                int approverId = int.Parse(userIdClaim);
+
                 var result = await _personnelActivityService.ApproveAsync(request.Id, request.Remarks);
 
                 if (result == null)
@@ -86,6 +93,22 @@ namespace ApiControllers
             }
            
         }
+
+        [HttpGet("pending")]
+        public async Task<IActionResult> GetByCurrentStep([FromQuery] PendingActivity pendingActivity)
+        {
+            try
+            {
+                IEnumerable<PersonnelActivityDTO> data = await _personnelActivityService.GetPending(pendingActivity);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+       
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
@@ -94,6 +117,19 @@ namespace ApiControllers
                 PersonnelActivity? data = await _personnelActivityService.GetByIdAsync(id);
                 if (data == null) return NoContent();
 
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("schooling")]
+        public async Task<IActionResult> InsertSchoolingAsync([FromBody] PersonnelActivity personnelActivity)
+        {
+            try
+            {
+                PersonnelActivity? data = await _personnelActivityService.InsertSchoolingAsync(personnelActivity);
                 return Ok(data);
             }
             catch (Exception ex)

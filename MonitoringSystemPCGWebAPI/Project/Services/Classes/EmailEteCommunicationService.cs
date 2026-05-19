@@ -16,7 +16,7 @@ namespace Services.Classes
         private readonly IEmailSenderUtility _emailSenderUtility;
         private readonly IPersonnelRepository _personnelRepository;
         private readonly IFileUtility _fileUtility;
-        IConfigurationRoot _config = new AppUtility().GetConfiguration();
+        private readonly IConfigurationRoot _config = new AppUtility().GetConfiguration();
         public EmailEteCommunicationService(IEmailEteCommunicationRepository emailEteCommunicationRepository, IEmailSenderUtility emailSenderUtility, IPersonnelRepository personnelRepository, IAppUtility appUtility)
         {
             _emailEteCommunicationRepository = emailEteCommunicationRepository;

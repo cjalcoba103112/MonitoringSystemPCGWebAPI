@@ -7,6 +7,7 @@ namespace Services.Interfaces
 {
     public interface IPersonnelService
     {
+        Task<IEnumerable<Personnel>> GetAllPersonnelOnly();
         Task<IEnumerable<PersonnelLeaveDto>> GetPersonnelCreditsAsync(int personnelId, int? activityTypeId = null, int? year = null, DateTime? date = null);
         Task<IEnumerable<EnlistedPersonnelETE>> GetEnlismentETE(Personnel? filter = null);
         Task<Personnel?> InsertAsync(Personnel data, IFormFile? profile);

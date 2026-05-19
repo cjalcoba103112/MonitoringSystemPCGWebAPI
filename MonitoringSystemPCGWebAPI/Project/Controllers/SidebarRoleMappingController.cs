@@ -17,7 +17,7 @@ namespace ApiControllers
         }
 
         [HttpGet("list")]
-        public async Task<IActionResult> GetAllAsync([FromQuery]SidebarRoleMapping filter)
+        public async Task<IActionResult> GetAllAsync([FromQuery] SidebarRoleMapping filter)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace ApiControllers
             {
                 return BadRequest(ex.Message);
             }
-           
+
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
@@ -46,7 +46,7 @@ namespace ApiControllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> InsertAsync([FromBody]SidebarRoleMapping sidebarRoleMapping)
+        public async Task<IActionResult> InsertAsync([FromBody] SidebarRoleMapping sidebarRoleMapping)
         {
             try
             {
@@ -60,16 +60,16 @@ namespace ApiControllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id,[FromBody]SidebarRoleMapping sidebarRoleMapping)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] SidebarRoleMapping sidebarRoleMapping)
         {
             try
             {
-                if(id != sidebarRoleMapping.SidebarRoleMappingId) return BadRequest("Id mismatched.");
+                if (id != sidebarRoleMapping.SidebarRoleMappingId) return BadRequest("Id mismatched.");
 
                 SidebarRoleMapping? data = await _sidebarRoleMappingService.GetByIdAsync(id);
                 if (data == null) return NotFound();
 
-                SidebarRoleMapping? updatedData = await _sidebarRoleMappingService.UpdateAsync(sidebarRoleMapping); 
+                SidebarRoleMapping? updatedData = await _sidebarRoleMappingService.UpdateAsync(sidebarRoleMapping);
                 return Ok(updatedData);
             }
             catch (Exception ex)
@@ -94,7 +94,7 @@ namespace ApiControllers
             }
         }
         [HttpPost("bulk")]
-        public async Task<IActionResult> BulkInsertAsync([FromBody]List<SidebarRoleMapping> listData)
+        public async Task<IActionResult> BulkInsertAsync([FromBody] List<SidebarRoleMapping> listData)
         {
             try
             {
@@ -145,6 +145,20 @@ namespace ApiControllers
                 return BadRequest(ex.Message);
             }
         }
-        
+        [HttpPost("sync/{roleId}")]
+        public async Task<IActionResult> SyncAsync(int roleId, [FromBody] List<int> sidebarIds)
+        {
+            try
+            {
+                // This calls the Sync method we created in your Service earlier
+                    var data = await _sidebarRoleMappingService.SyncRolePermissionsAsync(roleId, sidebarIds);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

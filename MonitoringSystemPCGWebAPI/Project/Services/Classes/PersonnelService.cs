@@ -1,5 +1,6 @@
 
 using ApplicationContexts;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.NonTables;
 using MonitoringSystemPCGWebAPI.Project.Models.NonTables;
@@ -13,11 +14,21 @@ namespace Services.Classes
     public class PersonnelService : IPersonnelService
     {
         private readonly IPersonnelRepository _personnelRepository;
+        private readonly IUsertblRepository _usertblRepository;
         private readonly FileUtility _fileUtility = new FileUtility("wwwroot/images/profiles");
         private readonly ApplicationContext _context = new ApplicationContext();
-        public PersonnelService(IPersonnelRepository personnelRepository)
+        public PersonnelService(IPersonnelRepository personnelRepository, IUsertblRepository usertblRepository)
         {
             _personnelRepository = personnelRepository;
+            _usertblRepository = usertblRepository;
+        }
+        public async Task<IEnumerable<Personnel>> GetAllPersonnelOnly()
+        {
+            return await _context.Personnel
+                .Include(p=>p.Rank)
+                .Include(p=>p.Department)
+                .OrderBy(p => p.Rank!.RankLevel)
+                 .ThenBy(p => p.SerialNumber).ToListAsync();
         }
         public async Task<IEnumerable<PersonnelLeaveDto>> GetPersonnelCreditsAsync(int personnelId, int? activityTypeId=null,int?year=null,DateTime?date=null)
         {
@@ -47,6 +58,7 @@ namespace Services.Classes
             if (existing == null) return null;
 
 
+
             if (profile != null && profile.Length > 0)
             {
                 
@@ -73,12 +85,21 @@ namespace Services.Classes
         {
             List<Personnel> result = new List<Personnel>();
             IEnumerable<Personnel> personnels = await _personnelRepository.GetAllAsync(filter);
-            
+            var users = await _usertblRepository.GetAllAsync();
+            var userEmailSet = users
+    .Where(u => !string.IsNullOrEmpty(u.Email))
+    .Select(u => u?.Email?.ToLower().Trim())
+    .ToHashSet();
+
             foreach ( var person in personnels)
             {
+                string personEmail = person.Email?.ToLower().Trim() ?? string.Empty;
+                person.HasAccount = userEmailSet.Contains(personEmail);
+
                 var duty =  _context.PersonnelDutyLogs.Where(p => p.PersonnelId == person.PersonnelId && (p.IsActive ?? false)).OrderByDescending(c=>c.Id).FirstOrDefault();
                 if (duty?.Status == "Reassined" || duty?.Status == "Inactive") continue;
                 person.DutyStatus = duty?.Status ?? "Active";
+
                 result.Add(person);
             }
             return result;

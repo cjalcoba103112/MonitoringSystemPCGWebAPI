@@ -11,10 +11,9 @@ namespace ApplicationContexts
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)   
         {
             string connectionString2 = "Server=LAPTOP-G6M745HP\\SQLEXPRESS;Database=RTCA_E_MonitoringSystem;Trusted_Connection=True;Encrypt=false";
-            string connectionString = "Server=LAPTOP-NPIJTS0A\\SQLEXPRESS;Database=RTCA_E_MonitoringSystem;Trusted_Connection=True;Encrypt=false";
+            string connectionString1 = "Server=LAPTOP-NPIJTS0A\\SQLEXPRESS;Database=RTCA_E_MonitoringSystem;Trusted_Connection=True;Encrypt=false";
            
-
-            string connectionString1 = "Server=db48160.public.databaseasp.net; Database=db48160; User Id=db48160; Password=m-9KF4d_q=6M; Encrypt=True; TrustServerCertificate=True; MultipleActiveResultSets=True;";
+            string connectionString = "Server=db48160.public.databaseasp.net; Database=db48160; User Id=db48160; Password=m-9KF4d_q=6M; Encrypt=True; TrustServerCertificate=True; MultipleActiveResultSets=True;";
             optionsBuilder.UseSqlServer(connectionString);
             optionsBuilder.EnableSensitiveDataLogging();
             base.OnConfiguring(optionsBuilder);
@@ -53,7 +52,8 @@ namespace ApplicationContexts
         public DbSet<SidebarRoleMapping> SidebarRoleMapping { get; set; }
 
         public DbSet<Usertbl> Usertbl { get; set; }
-
+        public DbSet<WorkflowSteps> WorkflowSteps { get; set; }
+        public DbSet<ActivityAppeal> ActivityAppeal { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
